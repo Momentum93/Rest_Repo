@@ -1,6 +1,7 @@
 #include "serial.h"
 
-void _Serial :: begin(int baud_rate=9600){
+//https://stackoverflow.com/questions/2545720/error-default-argument-given-for-parameter-1
+void _Serial :: begin(int baud_rate/*=9600*/){
 
     //https://stackoverflow.com/questions/10673585/start-thread-with-member-function
     std::thread (&_Serial::sent, this);
