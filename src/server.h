@@ -26,17 +26,16 @@ class AccessPoint{
         AsyncWebServer server;
 
         void setup_rest();
-        void handle_rest();
+        void (*_print)(String str);
+        void print(String str);
 
     public:
         AccessPoint();
         void set_SSID(char * c);
         void start();
-        IPAddress get_ip();
 
-        //can't return Webserver server?????
-        //workaround:
-        void handle_client();
+        void bind_print(void (*func)(String str));
+
        
 };
 

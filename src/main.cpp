@@ -1,30 +1,33 @@
 #include <Arduino.h>
 #include "server.h"
-//-----------------------------
 
-#define BAUD_RATE 9600
-//-----------------------------
+
+
+
+#include "serial.h"
+
+
+
+
 
 AccessPoint ap;
-//-----------------------------
+_Serial _serial;
 
 
-void printLn(String str){
-  Serial.println(str);
-}
+
+
+
+
 
 void setup() {
-  Serial.begin(BAUD_RATE);
-  //ap.set_SSID("test");
-  //IPAddress ip = ap.start();
-  //Serial.println(ip);
-  //ap.start();
-  //Serial.println(ap.get_ip());
-  ap.start();
-  Serial.print(ap.get_ip());
+  _serial.register_pc_callback(
+    [](String str){_serial.write(str);});
+  _serial.begin();
 
+  ap.bind_print([](String str){_serial.write(str);});
+  ap.start();
 }
 
 void loop() {
-  //ap.handle_client();
+
 }
