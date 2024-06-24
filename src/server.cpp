@@ -36,28 +36,21 @@ void AccessPoint :: setup_rest(){
         request->send(200, "application/json", buffer);
     });
 
-
-   
-
     //https://raphaelpralat.medium.com/example-of-json-rest-api-for-esp32-4a5f64774a05
     AsyncCallbackJsonWebHandler *handler = new
     AsyncCallbackJsonWebHandler("/", [](AsyncWebServerRequest *request, JsonVariant &json) {
         StaticJsonDocument<200> data;
-        if (json.is<JsonArray>())
-        {
-        data = json.as<JsonArray>();
-        }
-        else if (json.is<JsonObject>())
-        {
-        data = json.as<JsonObject>();
+        if (json.is<JsonArray>()) {
+            data = json.as<JsonArray>();
+        } else if (json.is<JsonObject>()) {
+            data = json.as<JsonObject>();
         }
         String response;
         serializeJson(data, response);
-        request->send(200, "application/json", response); 
+        request->send(200, "application/json", response);
     });
 
     this -> server.addHandler(handler);
-
 }
 
 void AccessPoint :: bind_print(void (*func)(String str)){
