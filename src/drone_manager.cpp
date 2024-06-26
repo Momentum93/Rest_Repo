@@ -26,30 +26,25 @@ Drone* DroneManager::getDroneByUserId(const std::string& user_id) {
 
 // Method to create drones closeby in multiple predefined positions
 void DroneManager::createDrones() {
-    std::vector<Position> positions = {
+    std::list<Position> positions = {
         {48.1423415209611, 11.511997110488098},
         {48.09165769491002, 11.644732285917598}
     };
     
+    int i = 0;
     for (Position position : positions) {
-        createDronesInArea(position);
+        std::string drone_id = Utils::getRandomDroneId(i);
+        if (getDroneById(drone_id) == nullptr) {  // drone should not exist already
+            float drone_price = 0.5;
+            int battery_level = Utils::getRandomBatteryLevel(i);
+            Drone new_drone(drone_id, drone_price, "drone_id", -1, battery_level, position);
+            drones.push_back(new_drone);
+        }
+        i++;
     }
 }
 
-// Method to create multiple drones closeby of specifiy coordinates
-void DroneManager::createDronesInArea(Position position) {
-    std::random_device rd;
-    std::mt19937 generator(rd());
-    std::uniform_int_distribution<> distribution(3, 6);
-    
-    int amount_of_drones = distribution(generator);
-    for (int i = 0; i < amount_of_drones; ++i) {
-        std::string drone_id = Utils::getRandomDroneId();
-        float drone_price = Utils::getDronePrice();
-        int battery_level = Utils::getRandomBatteryLevel();
-        Position random_position = Utils::getRandomClosebyPosition(position);
-
-        Drone new_drone(drone_id, drone_price, drone_id, 0, battery_level, random_position);
-        drones.push_back(new_drone);
-    }
+// Gets the drones
+std::list<Drone>* DroneManager::getDrones() {
+    return &drones;
 }

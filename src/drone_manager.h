@@ -10,17 +10,10 @@
 
 class DroneManager {
 public:
-    // Method to get a drone by ID
     Drone* getDroneById(const std::string& drone_id);
-
-    // Method to get a drone by User ID
     Drone* getDroneByUserId(const std::string& user_id);
-
-    // Method to create drones in predefined positions
     void createDrones();
-
-    // Method to create drones in a specific area
-    void createDronesInArea(Position position);
+    std::list<Drone>* getDrones();
 
 private:
     std::list<Drone> drones;
