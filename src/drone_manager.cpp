@@ -33,10 +33,10 @@ void DroneManager::createDrones() {
     
     int i = 0;
     for (Position position : positions) {
-        std::string drone_id = Utils::getRandomDroneId(i);
+        std::string drone_id = Utils::getRandomDroneId(i * 100);
         if (getDroneById(drone_id) == nullptr) {  // drone should not exist already
             float drone_price = 0.5;
-            int battery_level = Utils::getRandomBatteryLevel(i);
+            int battery_level = Utils::getRandomBatteryLevel(i * 100);
             Drone new_drone(drone_id, drone_price, "", -1, battery_level, position);
             drones.push_back(new_drone);
         }
