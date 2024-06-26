@@ -39,7 +39,7 @@ void AccessPoint :: setup_rest(){
     });
 
     https://raphaelpralat.medium.com/example-of-json-rest-api-for-esp32-4a5f64774a05
-    AsyncCallbackJsonWebHandler *handler = new
+    AsyncCallbackJsonWebHandler *handler1 = new
     AsyncCallbackJsonWebHandler("/", [](AsyncWebServerRequest *request, JsonVariant &json) {
         StaticJsonDocument<200> data;
         if (json.is<JsonArray>()) {
@@ -74,7 +74,6 @@ void AccessPoint :: setup_rest(){
         request->send(200, "application/json", buffer);
     });
 
-    //https://raphaelpralat.medium.com/example-of-json-rest-api-for-esp32-4a5f64774a05
     AsyncCallbackJsonWebHandler *handler2 = new
     AsyncCallbackJsonWebHandler("/rent_drone", [this](AsyncWebServerRequest *request, JsonVariant &json) {
         StaticJsonDocument<1024> data = json.as<JsonObject>();
@@ -85,6 +84,7 @@ void AccessPoint :: setup_rest(){
         Drone* the_drone = &(*this->droneManager.getDroneByUserId(user_id));
         char buffer[256];
         StaticJsonDocument<256> jsonDocument;
+
         if (the_drone != nullptr) {
             jsonDocument.clear();
             jsonDocument["status"] = "error";
@@ -107,13 +107,39 @@ void AccessPoint :: setup_rest(){
                 jsonDocument["timestamp_rental_started"] = timestamp_rental_started;
             }
         }
-        
+
         serializeJson(jsonDocument, buffer);
         request->send(200, "application/json", buffer);
     });
 
-    this -> server.addHandler(handler);
+    AsyncCallbackJsonWebHandler *handler3 = new
+    AsyncCallbackJsonWebHandler("/get_rental", [this](AsyncWebServerRequest *request, JsonVariant &json) {
+        StaticJsonDocument<1024> data = json.as<JsonObject>();
+
+        std::string user_id = data["user_id"];
+
+        Drone* the_drone = &(*this->droneManager.getDroneByUserId(user_id));
+        char buffer[256];
+        StaticJsonDocument<256> jsonDocument;
+
+        if (the_drone == nullptr) {
+            jsonDocument.clear();
+            jsonDocument["active_rental"] = "no";
+        } else {
+            jsonDocument.clear();
+            jsonDocument["active_rental"] = "yes";
+            jsonDocument["user_id"] = user_id;
+            jsonDocument["drone_id"] = the_drone->getUserId();
+            jsonDocument["timestamp_rental_started"] = the_drone->getTimestampRentalStarted();
+        }
+
+        serializeJson(jsonDocument, buffer);
+        request->send(200, "application/json", buffer);
+    });
+
+    this -> server.addHandler(handler1);
     this -> server.addHandler(handler2);
+    this -> server.addHandler(handler3);
 }
 
 void AccessPoint :: bind_print(void (*func)(String str)){
