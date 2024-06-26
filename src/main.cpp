@@ -7,8 +7,11 @@
 ArrayList<String> L_fromPC;
 ArrayList<String> L_toPC;
 
+AccessPoint ap;
+
 void setup() {
   Serial.begin(BAUDRATE);
+  ap.start();
 }
 
 
