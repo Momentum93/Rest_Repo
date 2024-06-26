@@ -21,7 +21,6 @@
 #define AccessPoint_H
 
 class AccessPoint{
-  
     private:
         char * SSID;
         //WebServer server;

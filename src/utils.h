@@ -15,12 +15,10 @@ struct Position {
 
 class Utils {
 public:
-    static std::string getRandomDroneId();
-    static int getRandomBatteryLevel();
+    static std::string getRandomDroneId(int seed);
+    static int getRandomBatteryLevel(int seed);
     static double getDronePrice();
-    
-    static Position getRandomClosebyPosition(const Position& position);
-    static double getCurrentTime();
+    static int getCurrentTime();
 };
 
 #endif // UTILS_H
