@@ -30,15 +30,15 @@ void AccessPoint :: setup_rest(){
         StaticJsonDocument<250> jsonDocument;
 
         jsonDocument.clear();
-        jsonDocument["type"] = "Gruppen Mitglied";
-        jsonDocument["value"] = "Thomas";
-        jsonDocument["unit"] = "Person";
+        jsonDocument["api"] = "AboveYouDrone";
+        jsonDocument["version"] = "1.0";
+        jsonDocument["date"] = "2024-07-02";
 
         serializeJson(jsonDocument, buffer);
         request->send(200, "application/json", buffer);
     });
 
-    https://raphaelpralat.medium.com/example-of-json-rest-api-for-esp32-4a5f64774a05
+    // https://raphaelpralat.medium.com/example-of-json-rest-api-for-esp32-4a5f64774a05
     AsyncCallbackJsonWebHandler *handler1 = new
     AsyncCallbackJsonWebHandler("/", [](AsyncWebServerRequest *request, JsonVariant &json) {
         StaticJsonDocument<200> data;
@@ -84,27 +84,25 @@ void AccessPoint :: setup_rest(){
         Drone* the_drone = &(*this->droneManager.getDroneByUserId(user_id));
         char buffer[256];
         StaticJsonDocument<256> jsonDocument;
+        jsonDocument.clear();
 
         if (the_drone != nullptr) {
-            jsonDocument.clear();
             jsonDocument["status"] = "error";
             jsonDocument["message"] = "You are already renting a drone";
         } else {
             the_drone = &(*this->droneManager.getDroneById(drone_id));  // (TODO: add null check)
             if (the_drone->getUserId() != "") {
-                jsonDocument.clear();
                 jsonDocument["status"] = "error";
                 jsonDocument["message"] = "This drone is already being rented";
             } else {
-                int timestamp_rental_started = Utils::getCurrentTime();
+                int current_timestamp = Utils::getCurrentTime();
                 the_drone->setUserId(user_id);
-                the_drone->setTimestampRentalStarted(timestamp_rental_started);
+                the_drone->setTimestampRentalStarted(current_timestamp);
 
-                jsonDocument.clear();
                 jsonDocument["status"] = "success";
                 jsonDocument["user_id"] = user_id;
                 jsonDocument["drone_id"] = drone_id;
-                jsonDocument["timestamp_rental_started"] = timestamp_rental_started;
+                jsonDocument["timestamp_rental_started"] = current_timestamp;
             }
         }
 
@@ -113,7 +111,7 @@ void AccessPoint :: setup_rest(){
     });
 
     AsyncCallbackJsonWebHandler *handler3 = new
-    AsyncCallbackJsonWebHandler("/get_rental", [this](AsyncWebServerRequest *request, JsonVariant &json) {
+    AsyncCallbackJsonWebHandler("/stop_rental", [this](AsyncWebServerRequest *request, JsonVariant &json) {
         StaticJsonDocument<1024> data = json.as<JsonObject>();
 
         std::string user_id = data["user_id"];
@@ -122,22 +120,21 @@ void AccessPoint :: setup_rest(){
         Drone* the_drone = &(*this->droneManager.getDroneByUserId(user_id));
         char buffer[256];
         StaticJsonDocument<256> jsonDocument;
+        jsonDocument.clear();
 
         if (the_drone == nullptr || the_drone->getId() != drone_id) {
-            jsonDocument.clear();
             jsonDocument["status"] = "error";
             jsonDocument["message"] = "Drone not found";
         } else {
             float timestamp_rental_started = the_drone->getTimestampRentalStarted();
             int current_timestamp = Utils::getCurrentTime();
             float time_of_rental = current_timestamp - timestamp_rental_started;
-            float price_to_pay = time_of_rental / 60 * the_drone->getPrice();
-            price_to_pay = roundf(price_to_pay * 100.0f) / 100.0f;  // only keep two decimals
+            float p = time_of_rental / 60 * the_drone->getPrice();
+            float price_to_pay = roundf(p * 100.0f) / 100.0f;  // only keep two decimals
 
             the_drone->setUserId("");
             the_drone->setTimestampRentalStarted(-1);
 
-            jsonDocument.clear();
             jsonDocument["status"] = "success";
             jsonDocument["user_id"] = user_id;
             jsonDocument["drone_id"] = drone_id;
@@ -159,16 +156,69 @@ void AccessPoint :: setup_rest(){
         Drone* the_drone = &(*this->droneManager.getDroneByUserId(user_id));
         char buffer[256];
         StaticJsonDocument<256> jsonDocument;
+        jsonDocument.clear();
 
         if (the_drone == nullptr) {
-            jsonDocument.clear();
             jsonDocument["active_rental"] = "no";
         } else {
-            jsonDocument.clear();
+            int current_timestamp = Utils::getCurrentTime();
             jsonDocument["active_rental"] = "yes";
             jsonDocument["user_id"] = user_id;
             jsonDocument["drone_id"] = the_drone->getId();
             jsonDocument["timestamp_rental_started"] = the_drone->getTimestampRentalStarted();
+            jsonDocument["timestamp_diff"] = the_drone->getTimestampRentalStarted() - current_timestamp;
+        }
+
+        serializeJson(jsonDocument, buffer);
+        request->send(200, "application/json", buffer);
+    });
+
+    AsyncCallbackJsonWebHandler *handler5 = new
+    AsyncCallbackJsonWebHandler("/drone_follow", [this](AsyncWebServerRequest *request, JsonVariant &json) {
+        StaticJsonDocument<1024> data = json.as<JsonObject>();
+
+        std::string user_id = data["user_id"];
+        std::string drone_id = data["drone_id"];
+
+        Drone* the_drone = &(*this->droneManager.getDroneByUserId(user_id));
+        char buffer[256];
+        StaticJsonDocument<256> jsonDocument;
+        jsonDocument.clear();
+
+        if (the_drone == nullptr || the_drone->getId() != drone_id) {
+            jsonDocument["status"] = "error";
+            jsonDocument["message"] = "Wrong drone id";
+        } else {
+            // TODO: Send command
+
+            jsonDocument["status"] = "success";
+            jsonDocument["message"] = "Drone will continue following";
+        }
+
+        serializeJson(jsonDocument, buffer);
+        request->send(200, "application/json", buffer);
+    });
+
+    AsyncCallbackJsonWebHandler *handler6 = new
+    AsyncCallbackJsonWebHandler("/stop_drone_follow", [this](AsyncWebServerRequest *request, JsonVariant &json) {
+        StaticJsonDocument<1024> data = json.as<JsonObject>();
+
+        std::string user_id = data["user_id"];
+        std::string drone_id = data["drone_id"];
+
+        Drone* the_drone = &(*this->droneManager.getDroneByUserId(user_id));
+        char buffer[256];
+        StaticJsonDocument<256> jsonDocument;
+        jsonDocument.clear();
+
+        if (the_drone == nullptr || the_drone->getId() != drone_id) {
+            jsonDocument["status"] = "error";
+            jsonDocument["message"] = "Wrong drone id";
+        } else {
+            // TODO: Send command
+
+            jsonDocument["status"] = "success";
+            jsonDocument["message"] = "Following will be stopped";
         }
 
         serializeJson(jsonDocument, buffer);
@@ -179,6 +229,7 @@ void AccessPoint :: setup_rest(){
     this -> server.addHandler(handler2);
     this -> server.addHandler(handler3);
     this -> server.addHandler(handler4);
+    this -> server.addHandler(handler5);
 }
 
 void AccessPoint :: bind_print(void (*func)(String str)){
