@@ -1,4 +1,5 @@
 #include "server.h"
+#include "utils.h"
 
 AccessPoint :: AccessPoint() :
     SSID("my esp32 rest ap"),
@@ -18,6 +19,8 @@ void AccessPoint :: start(){
     this -> setup_rest();
 
     this -> server.begin();
+
+    droneManager.createDrones();
 }
 
 void AccessPoint :: setup_rest(){
@@ -26,11 +29,13 @@ void AccessPoint :: setup_rest(){
     this -> server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
         char buffer[250];
         StaticJsonDocument<250> jsonDocument;
+        Utils utils;
 
         jsonDocument.clear();
         jsonDocument["type"] = "Gruppen Mitglied";
         jsonDocument["value"] = "Thomas";
         jsonDocument["unit"] = "Person";
+        jsonDocument["random_uid"] = utils.getRandomDroneId();
 
         serializeJson(jsonDocument, buffer);
         request->send(200, "application/json", buffer);

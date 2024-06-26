@@ -9,6 +9,8 @@
 //#include <AsyncTCP.h>
 //#include <WiFiManager.h>
 
+#include "drone_manager.h"
+
 // using namespace std ?
 
 
@@ -17,6 +19,7 @@
 
 #ifndef AccessPoint_H
 #define AccessPoint_H
+
 class AccessPoint{
   
     private:
@@ -24,6 +27,7 @@ class AccessPoint{
         //WebServer server;
         IPAddress ip;
         AsyncWebServer server;
+        DroneManager droneManager;
 
         void setup_rest();
         void (*_print)(String str);
@@ -35,8 +39,6 @@ class AccessPoint{
         void start();
 
         void bind_print(void (*func)(String str));
-
-       
 };
 
 #endif
