@@ -13,6 +13,13 @@ struct Position {
     double lng;
 };
 
+typedef  struct {
+    String type;
+    //byte* payload;
+    //String payload;
+    String payload;
+} Data;
+
 class Utils {
 public:
     static std::string getRandomDroneId(int seed);

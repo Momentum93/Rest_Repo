@@ -1,10 +1,24 @@
 #include "server.h"
 #include "utils.h"
 
-AccessPoint :: AccessPoint() :
+AccessPoint :: AccessPoint(
+    uint8_t (& img)[], 
+    ArrayList<Data> & L_fromPC,
+    ArrayList<Data> & L_toPC) :
+
+    //----------------------------------
+
     SSID("my esp32 rest ap"),
-    server(80)
-{};
+    server(80),
+    img(img),
+    L_fromPC(L_fromPC),
+    L_toPC(L_toPC)
+{
+    //this->L_fromPC = L_fromPC;
+    //this->img = img;
+    //(*this).img = {};
+    //mempcpy(&img[0], (*this).img, img.size());
+};
 
 void AccessPoint :: set_SSID(char * c){
     this -> SSID = c;
@@ -23,7 +37,8 @@ void AccessPoint :: start(){
 
 void AccessPoint :: setup_rest(){
     //this -> server.on("/", std::bind(&AccessPoint::handle_rest, this));
-    droneManager.createDrones();
+    //droneManager.createDrones();
+    this -> droneManager.createDrones();
 
     this -> server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
         char buffer[250];

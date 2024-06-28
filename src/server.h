@@ -8,6 +8,7 @@
 #include <AsyncJson.h>
 //#include <AsyncTCP.h>
 //#include <WiFiManager.h>
+#include "ArrayList.h"
 
 #include "drone_manager.h"
 
@@ -32,8 +33,18 @@ class AccessPoint{
         void (*_print)(String str);
         void print(String str);
 
+        //uint8_t  img[];
+        ArrayList<Data> & L_fromPC;
+        ArrayList<Data> & L_toPC;
+
+        //https://stackoverflow.com/questions/5724171/passing-an-array-by-reference
+        uint8_t (& img)[];
+
     public:
-        AccessPoint();
+        AccessPoint(
+            uint8_t (& img)[], 
+            ArrayList<Data> & L_fromPC,
+            ArrayList<Data> & L_toPC);
         void set_SSID(char * c);
         void start();
 
