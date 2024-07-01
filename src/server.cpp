@@ -218,6 +218,7 @@ void AccessPoint :: setup_rest(){
         request->send(200, "application/json", buffer);
     });
 
+
     AsyncCallbackJsonWebHandler *handler2 = new
     AsyncCallbackJsonWebHandler("/rent_drone", [this](AsyncWebServerRequest *request, JsonVariant &json) {
         StaticJsonDocument<1024> data = json.as<JsonObject>();
@@ -399,11 +400,17 @@ void AccessPoint :: setup_rest(){
         */
     });
 
+    AsyncCallbackJsonWebHandler *handler6 = new
+    AsyncCallbackJsonWebHandler("/rent_drone", [this](AsyncWebServerRequest *request, JsonVariant &json) {
+        L_toPV.push_back("<COMMAND>PANIC_BUTTON");
+    });
+
     this -> server.addHandler(handler1);
     this -> server.addHandler(handler2);
     this -> server.addHandler(handler3);
     this -> server.addHandler(handler4);
     this -> server.addHandler(handler5);
+    this -> server.addHandler(handler6);
 }
 
 void AccessPoint :: bind_print(void (*func)(String str)){
