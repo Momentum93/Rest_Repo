@@ -33,6 +33,9 @@ class AccessPoint{
         void (*_print)(String str);
         void print(String str);
 
+        std::vector<String> & L_toPC;
+        std::vector<String> & L_fromPC;
+        String & img;
 
         //ArrayList<Data> & L_fromPC;
         //ArrayList<Data> & L_toPC;
@@ -45,6 +48,9 @@ class AccessPoint{
             //uint8_t (& img)[], 
             //ArrayList<Data> & L_fromPC,
             //ArrayList<Data> & L_toPC
+            std::vector<String> & L_toPC,
+            std::vector<String> & L_fromPC,
+            String & img
             );
         void set_SSID(char * c);
         void start();

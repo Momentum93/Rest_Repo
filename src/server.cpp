@@ -127,11 +127,17 @@ AccessPoint :: AccessPoint :: AccessPoint(
     //uint8_t (& img)[], 
     //ArrayList<Data> & L_fromPC,
     //ArrayList<Data> & L_toPC
+            std::vector<String> & L_toPC,
+            std::vector<String> & L_fromPC,
+            String & img
     ) 
     :
     //----------------------------------
     SSID("my esp32 rest ap"),
-    server(80)
+    server(80),
+    L_fromPC(L_fromPC),
+    L_toPC(L_toPC),
+    img(img)
     //img(img),
     //L_fromPC(L_fromPC),
     //L_toPC(L_toPC)
@@ -364,13 +370,18 @@ void AccessPoint :: setup_rest(){
     });
 
     this -> server.on("/image", HTTP_GET, [this](AsyncWebServerRequest *request){
-        
+        (*this).L_toPC.push_back("<IMAGE>REQUEST_IMAGE");
+        //<COMMAND>TAKE_OFF
+        while((*this).img == ""){}
+        request -> send(200, "plain/text", (*this).img);
+        this -> img = "";
          //sizeof(img_test);
         //AsyncWebServerResponse *response = request->beginResponse_P(200, "image/x-icon", favicon_ico_gz, favicon_ico_gz_len);
         //const std::vector<uint8_t> tmp;
         //const uint8_t tmp2[] = {};
         //uint8_t * tmp3[2];
         //tmp3 = {455,3};
+        /*
         if (!img_test.empty()){
             const uint8_t * tmp = &img_test[0];
             int length = sizeof(tmp);
@@ -383,6 +394,7 @@ void AccessPoint :: setup_rest(){
             //-> not needed: only if ...=new []
             //delete [] tmp;
         }
+        */
     });
 
     this -> server.addHandler(handler1);
