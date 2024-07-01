@@ -333,8 +333,9 @@ void AccessPoint :: setup_rest(){
             jsonDocument["status"] = "error";
             jsonDocument["message"] = "Wrong drone id";
         } else {
-            // TODO: Send command
-
+            // T_O_D_O: Send command
+            // Done?
+            L_toPC.push_back("<COMMAND>START_TRACK");
             jsonDocument["status"] = "success";
             jsonDocument["message"] = "Drone will continue following";
         }
@@ -359,7 +360,9 @@ void AccessPoint :: setup_rest(){
             jsonDocument["status"] = "error";
             jsonDocument["message"] = "Wrong drone id";
         } else {
-            // TODO: Send command
+            // T_O_D_O: Send command
+
+            L_toPC.push_back("<COMMAND>STOP_TRACKING");
 
             jsonDocument["status"] = "success";
             jsonDocument["message"] = "Following will be stopped";
@@ -370,30 +373,29 @@ void AccessPoint :: setup_rest(){
     });
 
     this -> server.on("/image", HTTP_GET, [this](AsyncWebServerRequest *request){
+        char buffer[256];
+        StaticJsonDocument<256> jsonDocument;
+        jsonDocument.clear();
+
         (*this).L_toPC.push_back("<IMAGE>REQUEST_IMAGE");
-        //<COMMAND>TAKE_OFF
+        if ((*this).img == ""){
+            jsonDocument["status"] = "waiting";
+            jsonDocument["image"] = "";
+        } else {
+
+            jsonDocument["status"] = "success";
+            jsonDocument["image"] = (*this).img;
+            this -> img = "";
+        }
+        
+        serializeJson(jsonDocument, buffer);
+        request->send(200, "application/json", buffer);
+        //do{}while(true);
+        //while((*this).img == ""){}
+        /*
         while((*this).img == ""){}
         request -> send(200, "plain/text", (*this).img);
         this -> img = "";
-         //sizeof(img_test);
-        //AsyncWebServerResponse *response = request->beginResponse_P(200, "image/x-icon", favicon_ico_gz, favicon_ico_gz_len);
-        //const std::vector<uint8_t> tmp;
-        //const uint8_t tmp2[] = {};
-        //uint8_t * tmp3[2];
-        //tmp3 = {455,3};
-        /*
-        if (!img_test.empty()){
-            const uint8_t * tmp = &img_test[0];
-            int length = sizeof(tmp);
-            AsyncWebServerResponse *response = request->beginResponse_P(200, "image/x-icon", tmp, length);
-                    
-            response->addHeader("Content-Encoding", "gzip");
-            request->send(response);
-
-            //https://stackoverflow.com/questions/28243015/how-to-deleting-const-array-in-c
-            //-> not needed: only if ...=new []
-            //delete [] tmp;
-        }
         */
     });
 

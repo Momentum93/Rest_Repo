@@ -92,6 +92,7 @@ void loop() {
     //Serial.println(type + "  --  " + payload);
     if (type == "IMAGE"){
       img = payload;
+      Serial.println(img.length());
     }
     else{
       L_fromPC.push_back(tmp);
