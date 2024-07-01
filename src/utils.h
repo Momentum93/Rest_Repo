@@ -7,6 +7,7 @@
 #include <cmath>
 #include <sstream>
 #include <iomanip>
+#include "Arduino.h"
 
 struct Position {
     double lat;

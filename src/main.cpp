@@ -25,15 +25,15 @@ typedef  struct {
 } Data;
 */
 
-uint8_t  img[]  PROGMEM;
+uint8_t  img[726]  PROGMEM; //ToDo need to be dynamic
 uint8_t * img_pointer PROGMEM;
 
 ArrayList<String> L_fromPC_old;
 ArrayList<String> L_toPC_old;
-ArrayList<Data> L_fromPC;
-ArrayList<Data> L_toPC;
+ArrayList<Data> L_fromPC={};
+ArrayList<Data> L_toPC={};
 
-AccessPoint ap;
+AccessPoint ap; //img, L_fromPC, L_toPC);
 
 /*
 regex_t regex;
@@ -54,7 +54,7 @@ controlMessage msg;
 
 void setup() {
   Serial.begin(BAUDRATE);
-  //ap.start();
+  ap.start();
   /*
   strcpy(msg.str, "struct123");
   strcpy(msg.t, "t");
