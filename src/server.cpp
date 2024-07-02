@@ -248,6 +248,11 @@ void AccessPoint :: setup_rest(){
                 jsonDocument["user_id"] = user_id;
                 jsonDocument["drone_id"] = drone_id;
                 jsonDocument["timestamp_rental_started"] = current_timestamp;
+                jsonDocument["timestamp_diff"] = the_drone->getTimestampRentalStarted() - current_timestamp;
+                
+                // T_O_D_O: Send command
+                // Done?
+                L_toPC.push_back("<COMMAND>TAKEOFF");
             }
         }
 
@@ -286,6 +291,10 @@ void AccessPoint :: setup_rest(){
             jsonDocument["timestamp_rental_started"] = timestamp_rental_started;
             jsonDocument["timestamp_rental_ended"] = current_timestamp;
             jsonDocument["price_to_pay"] = price_to_pay;
+            
+            // T_O_D_O: Send command
+            // Done?
+            L_toPC.push_back("<COMMAND>LAND");
         }
 
         serializeJson(jsonDocument, buffer);
